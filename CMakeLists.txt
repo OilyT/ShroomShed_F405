@@ -49,6 +49,16 @@ target_include_directories(st7735 PUBLIC
 # Link ST7735 with stm32cubemx to get access to HAL headers
 target_link_libraries(st7735 PRIVATE stm32cubemx)
 
+# Create EEZ UI library
+file(GLOB EEZ_UI_SOURCES "EEZ/ShroomShed_F405/src/ui/*.c")
+add_library(eez_ui STATIC ${EEZ_UI_SOURCES})
+target_include_directories(eez_ui PUBLIC 
+    EEZ/ShroomShed_F405/src/ui
+)
+# Link EEZ UI with LVGL and stm32cubemx
+target_link_libraries(eez_ui PUBLIC lvgl PRIVATE stm32cubemx)
+
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -65,7 +75,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     lib/lvgl
     lib/lvgl/src
-
 )
 
 # Add project symbols (macros)
@@ -82,4 +91,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     # Add user defined libraries
     lvgl
     st7735
+    eez_ui
 )

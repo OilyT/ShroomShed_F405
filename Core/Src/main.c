@@ -22,7 +22,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display_manager.h"
-#include "lvgl.h"
 
 /* USER CODE END Includes */
 
@@ -129,8 +128,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    uint32_t time_till_next = lv_timer_handler();
-    HAL_Delay(time_till_next);
+    updateDisplay();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -6,9 +6,10 @@
 */
 
 #include "display_manager.h"
-#include "main.h"
+#include "main.h"  
 #include "st7735.h"
 #include "lvgl.h"
+#include "ui.h"
 
 
 /* Declare buffer for 1/10 screen size; BYTES_PER_PIXEL will be 2 for RGB565. */
@@ -38,6 +39,11 @@ void initDisplay(void) {
 
     lv_display_set_flush_cb(display, my_flush_cb);
 
+    // Initialize EEZ Studio generated UI
+    ui_init();
+    
+    // Load the main screen
+    loadScreen(SCREEN_ID_MAIN);
  }
 
 
@@ -55,6 +61,15 @@ void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_ma
     }
 
     lv_display_flush_ready(display);
+}
+
+
+void updateDisplay(void) {
+    // Call LVGL timer handler
+    lv_timer_handler();
+    
+    // Call EEZ UI tick (handles screen updates)
+    ui_tick();
 }
 
 

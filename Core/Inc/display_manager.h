@@ -21,6 +21,7 @@ extern "C" {
 
 
 void initDisplay(void);
+void updateDisplay(void);
 void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_map);
 
 
