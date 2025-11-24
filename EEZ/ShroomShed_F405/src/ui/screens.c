@@ -14,9 +14,9 @@ objects_t objects;
 lv_obj_t *tick_value_change_obj;
 uint32_t active_theme_index = 0;
 
-void create_screen_main() {
+void create_screen_splash_screen() {
     lv_obj_t *obj = lv_obj_create(0);
-    objects.main = obj;
+    objects.splash_screen = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 128, 160);
     {
@@ -29,16 +29,76 @@ void create_screen_main() {
         }
     }
     
+    tick_screen_splash_screen();
+}
+
+void tick_screen_splash_screen() {
+}
+
+void create_screen_main() {
+    lv_obj_t *obj = lv_obj_create(0);
+    objects.main = obj;
+    lv_obj_set_pos(obj, 0, 0);
+    lv_obj_set_size(obj, 128, 160);
+    {
+        lv_obj_t *parent_obj = obj;
+        {
+            // Header
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.header = obj;
+            lv_obj_set_pos(obj, 4, 0);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_obj_set_style_text_color(obj, lv_color_hex(0xff212121), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_color(obj, lv_color_hex(0xff2378cb), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "ShroomShed");
+        }
+        {
+            lv_obj_t *obj = lv_bar_create(parent_obj);
+            objects.obj0 = obj;
+            lv_obj_set_pos(obj, 0, 80);
+            lv_obj_set_size(obj, 128, 20);
+            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+        }
+        {
+            // Humidity_label
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.humidity_label = obj;
+            lv_obj_set_pos(obj, 10, 45);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_obj_set_style_text_color(obj, lv_color_hex(0xff212121), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_color(obj, lv_color_hex(0xff2378cb), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "Humidity %");
+        }
+    }
+    
     tick_screen_main();
 }
 
 void tick_screen_main() {
+    {
+        int32_t new_val = get_var_display_var_humidity();
+        int32_t cur_val = lv_bar_get_value(objects.obj0);
+        if (new_val != cur_val) {
+            tick_value_change_obj = objects.obj0;
+            lv_bar_set_value(objects.obj0, new_val, LV_ANIM_ON);
+            tick_value_change_obj = NULL;
+        }
+    }
 }
 
 
 
 typedef void (*tick_screen_func_t)();
 tick_screen_func_t tick_screen_funcs[] = {
+    tick_screen_splash_screen,
     tick_screen_main,
 };
 void tick_screen(int screen_index) {
@@ -53,5 +113,6 @@ void create_screens() {
     lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     
+    create_screen_splash_screen();
     create_screen_main();
 }

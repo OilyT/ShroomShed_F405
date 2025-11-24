@@ -15,11 +15,13 @@ extern "C" {
 // Flow global variables
 
 enum FlowGlobalVariables {
-    FLOW_GLOBAL_VARIABLE_NONE
+    FLOW_GLOBAL_VARIABLE_DISPLAY_VAR_HUMIDITY = 0
 };
 
 // Native global variables
 
+int32_t get_var_display_var_humidity(void);
+void set_var_display_var_humidity(int32_t value);
 
 
 #ifdef __cplusplus

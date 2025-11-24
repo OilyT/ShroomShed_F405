@@ -7,6 +7,7 @@
 
 #include "display_manager.h"
 #include "main.h"  
+#include "screens.h"
 #include "st7735.h"
 #include "lvgl.h"
 #include "ui.h"
@@ -41,9 +42,10 @@ void initDisplay(void) {
 
     // Initialize EEZ Studio generated UI
     ui_init();
-    
-    // Load the main screen
-    loadScreen(SCREEN_ID_MAIN);
+    loadScreen(SCREEN_ID_SPLASH_SCREEN);
+    updateDisplay();
+    updateDisplay();
+    HAL_Delay(2000); 
  }
 
 
@@ -70,6 +72,14 @@ void updateDisplay(void) {
     
     // Call EEZ UI tick (handles screen updates)
     ui_tick();
+}
+
+void displayProcess(void) {
+    // Placeholder for display processing code
+    loadScreen(SCREEN_ID_MAIN);
+
+    updateDisplay();
+
 }
 
 

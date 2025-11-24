@@ -55,6 +55,14 @@ add_library(eez_ui STATIC ${EEZ_UI_SOURCES})
 target_include_directories(eez_ui PUBLIC 
     EEZ/ShroomShed_F405/src/ui
 )
+
+# create SHT31 library
+file(GLOB SHT31_SOURCES "lib/sht31/src/*.c")
+add_library(sht31 STATIC ${SHT31_SOURCES})
+target_include_directories(sht31 PUBLIC 
+    lib/sht31/inc
+)
+
 # Link EEZ UI with LVGL and stm32cubemx
 target_link_libraries(eez_ui PUBLIC lvgl PRIVATE stm32cubemx)
 

@@ -1,12 +1,11 @@
-/* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : display_manager.h
-  * @brief          : Header for display_manager.c file.
-  *                   This file contains the common defines of the application.
-  ******************************************************************************
-  */
-/* USER CODE END Header */
+******************************************************************************
+* @file           : display_manager.h
+* @brief          : Header for display_manager.c file.
+*                   This file contains the common defines of the application.
+******************************************************************************
+*/
+
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __DISPLAY_MANAGER_H
@@ -19,7 +18,7 @@ extern "C" {
 #include "main.h"
 #include "lvgl.h"
 
-
+void displayProcess(void);
 void initDisplay(void);
 void updateDisplay(void);
 void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_map);

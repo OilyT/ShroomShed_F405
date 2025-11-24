@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display_manager.h"
+#include "stm32f4xx_hal.h"
 
 /* USER CODE END Includes */
 
@@ -32,6 +33,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// system polling
+#define SYSTICK_HZ 1000
+#define BUTTON_PROCESS_HZ 100
+#define SERIAL_PROCESS_HZ 1
+#define DISPLAY_PROCESS_HZ 5
+#define SENSOR_PROCESS_HZ 1
+#define CONTROL_PROCESS_HZ 5
 
 /* USER CODE END PD */
 
@@ -58,6 +66,13 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 /* USER CODE BEGIN PV */
 
+uint32_t currentSystick;
+uint32_t lastSerialProcess;
+uint32_t lastButtonProcess;
+uint32_t lastDisplayProcess;
+uint32_t lastControlProcess;
+uint32_t lastSensorProcess;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,6 +88,11 @@ static void MX_TIM4_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
+static void sensorProcess(void);
+static void humidityProcess(void);
+static void fanProcess(void);
+static void IOProcess(void);
+static void serialProcess(void);
 
 /* USER CODE END PFP */
 
@@ -128,7 +148,33 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    updateDisplay();
+    currentSystick = HAL_GetTick();
+
+    if (lastButtonProcess + (SYSTICK_HZ/BUTTON_PROCESS_HZ) < currentSystick) {
+      lastButtonProcess = currentSystick;
+      IOProcess();
+    }
+
+    if (lastSensorProcess + (SYSTICK_HZ/SENSOR_PROCESS_HZ) < currentSystick) {
+      lastSensorProcess = currentSystick;
+      sensorProcess();
+    }
+
+    if (lastControlProcess+ (SYSTICK_HZ/CONTROL_PROCESS_HZ) < currentSystick) {
+      lastControlProcess = currentSystick;
+      humidityProcess();
+      fanProcess();
+    }
+
+    if (lastDisplayProcess + (SYSTICK_HZ/DISPLAY_PROCESS_HZ) < currentSystick) {
+      lastDisplayProcess = currentSystick;
+      displayProcess();
+    }
+
+    if (lastSerialProcess + (SYSTICK_HZ/SERIAL_PROCESS_HZ) < currentSystick) {
+      lastSerialProcess = currentSystick;
+      serialProcess();
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -611,6 +657,30 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void IOProcess(void) {
+  // Placeholder for IO processing code
+}
+
+void sensorProcess(void) {
+  // Placeholder for sensor processing code
+}
+
+void humidityProcess(void) {
+  // Placeholder for humidity processing code
+}
+
+void fanProcess(void) {
+  // Placeholder for fan processing code
+}
+
+
+void ButtonProcess(void) {
+  // Placeholder for button processing code
+}
+
+void serialProcess(void) {
+  // Placeholder for serial processing code
+}
 /* USER CODE END 4 */
 
 /**
