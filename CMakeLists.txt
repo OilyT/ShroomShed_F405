@@ -54,28 +54,42 @@ file(GLOB EEZ_UI_SOURCES "EEZ/ShroomShed_F405/src/ui/*.c")
 add_library(eez_ui STATIC ${EEZ_UI_SOURCES})
 target_include_directories(eez_ui PUBLIC 
     EEZ/ShroomShed_F405/src/ui
+    Core/Inc    
+)
+target_include_directories(eez_ui PRIVATE
+    lib/lvgl
+    lib/lvgl/src
 )
 
-# create SHT31 library
-file(GLOB SHT31_SOURCES "lib/sht31/src/*.c")
-add_library(sht31 STATIC ${SHT31_SOURCES})
-target_include_directories(sht31 PUBLIC 
-    lib/sht31/inc
-)
 
 # Link EEZ UI with LVGL and stm32cubemx
 target_link_libraries(eez_ui PUBLIC lvgl PRIVATE stm32cubemx)
 
-
-# Link directories setup
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined library search paths
+# Create SHT31 library
+file(GLOB SHT31_SOURCES "lib/sht31/src/*.c")
+add_library(sht31 STATIC ${SHT31_SOURCES})
+target_include_directories(sht31 PUBLIC 
+    lib/sht31/src
 )
+# Link SHT31 with stm32cubemx
+target_link_libraries(sht31 PRIVATE stm32cubemx)
+
+# Create USB Device library
+file(GLOB USB_DEVICE_SOURCES "USB_DEVICE/App/*.c" "USB_DEVICE/Target/*.c")
+add_library(usb_device STATIC ${USB_DEVICE_SOURCES})
+target_include_directories(usb_device PUBLIC
+    USB_DEVICE/App
+    USB_DEVICE/Target
+)
+# Link USB Device with stm32cubemx
+target_link_libraries(usb_device PRIVATE stm32cubemx)
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     Core/Src/display_manager.c
+    Core/Src/sensors.c
+    Core/Src/vars.c
 )
 
 # Add include paths
@@ -100,4 +114,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     lvgl
     st7735
     eez_ui
+    sht31
+    usb_device
 )

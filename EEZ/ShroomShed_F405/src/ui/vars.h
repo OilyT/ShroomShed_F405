@@ -20,8 +20,8 @@ enum FlowGlobalVariables {
 
 // Native global variables
 
-int32_t get_var_display_var_humidity(void);
-void set_var_display_var_humidity(int32_t value);
+extern float get_var_display_var_humidity();
+extern void set_var_display_var_humidity(float value);
 
 
 #ifdef __cplusplus

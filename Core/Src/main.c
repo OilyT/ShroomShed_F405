@@ -18,11 +18,17 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display_manager.h"
 #include "stm32f4xx_hal.h"
+#include "shroom_shed.h"
+#include "sensors.h"
+#include "usbd_cdc_if.h"
+
+
 
 /* USER CODE END Includes */
 
@@ -62,8 +68,6 @@ SPI_HandleTypeDef hspi2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
-PCD_HandleTypeDef hpcd_USB_OTG_FS;
-
 /* USER CODE BEGIN PV */
 
 uint32_t currentSystick;
@@ -73,6 +77,9 @@ uint32_t lastDisplayProcess;
 uint32_t lastControlProcess;
 uint32_t lastSensorProcess;
 
+char usb_buffer[200];
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,7 +87,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
-static void MX_USB_OTG_FS_PCD_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_DAC_Init(void);
 static void MX_TIM3_Init(void);
@@ -98,6 +104,8 @@ static void serialProcess(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// Define the global shroomShed instance
+struct shroomShed_t shroomShed = {0};
 
 /* USER CODE END 0 */
 
@@ -132,15 +140,16 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
-  MX_USB_OTG_FS_PCD_Init();
   MX_ADC3_Init();
   MX_DAC_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_SPI2_Init();
   MX_SPI1_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   initDisplay();
+  init_sensors();
 
   /* USER CODE END 2 */
 
@@ -573,41 +582,6 @@ static void MX_TIM4_Init(void)
 }
 
 /**
-  * @brief USB_OTG_FS Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USB_OTG_FS_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_OTG_FS_Init 0 */
-
-  /* USER CODE END USB_OTG_FS_Init 0 */
-
-  /* USER CODE BEGIN USB_OTG_FS_Init 1 */
-
-  /* USER CODE END USB_OTG_FS_Init 1 */
-  hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
-  hpcd_USB_OTG_FS.Init.dev_endpoints = 4;
-  hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
-  hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-  hpcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.vbus_sensing_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
-  if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_OTG_FS_Init 2 */
-
-  /* USER CODE END USB_OTG_FS_Init 2 */
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -663,6 +637,7 @@ void IOProcess(void) {
 
 void sensorProcess(void) {
   // Placeholder for sensor processing code
+  read_sensors();
 }
 
 void humidityProcess(void) {
@@ -680,6 +655,9 @@ void ButtonProcess(void) {
 
 void serialProcess(void) {
   // Placeholder for serial processing code
+  sprintf(usb_buffer, "SHT31 Temp: %f, SHT31 Humidity: %f\r\n", shroomShed.temperatureCurrent, shroomShed.humidityCurrent);
+  CDC_Transmit_FS((uint8_t*)usb_buffer, strlen(usb_buffer));
+  
 }
 /* USER CODE END 4 */
 

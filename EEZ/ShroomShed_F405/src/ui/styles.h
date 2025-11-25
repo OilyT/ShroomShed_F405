@@ -7,6 +7,21 @@
 extern "C" {
 #endif
 
+// Style: ShroomShed_Header
+lv_style_t *get_style_shroom_shed_header_MAIN_DEFAULT();
+void add_style_shroom_shed_header(lv_obj_t *obj);
+void remove_style_shroom_shed_header(lv_obj_t *obj);
+
+// Style: ShroomShed_SubHeading
+lv_style_t *get_style_shroom_shed_sub_heading_MAIN_DEFAULT();
+void add_style_shroom_shed_sub_heading(lv_obj_t *obj);
+void remove_style_shroom_shed_sub_heading(lv_obj_t *obj);
+
+// Style: ShroomShed_SmallLabel
+lv_style_t *get_style_shroom_shed_small_label_MAIN_DEFAULT();
+void add_style_shroom_shed_small_label(lv_obj_t *obj);
+void remove_style_shroom_shed_small_label(lv_obj_t *obj);
+
 
 
 #ifdef __cplusplus

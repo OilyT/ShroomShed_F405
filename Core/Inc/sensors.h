@@ -14,9 +14,8 @@ extern "C" {
 
 
 
-
-
-
+void read_sensors(void);
+void init_sensors(void);
 
 
 

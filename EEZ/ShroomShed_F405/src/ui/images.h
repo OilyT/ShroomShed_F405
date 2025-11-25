@@ -9,6 +9,7 @@ extern "C" {
 
 extern const lv_img_dsc_t img_shroom_shed_logo_nearest_neighbour;
 extern const lv_img_dsc_t img_shroom_shed_logo_bicubic;
+extern const lv_img_dsc_t img_shroom_shed_logo_color_bicubic;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -18,7 +19,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[2];
+extern const ext_img_desc_t images[3];
 
 
 #ifdef __cplusplus
