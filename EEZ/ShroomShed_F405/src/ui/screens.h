@@ -13,7 +13,14 @@ typedef struct _objects_t {
     lv_obj_t *header;
     lv_obj_t *humidity_bar;
     lv_obj_t *humidity_label;
-    lv_obj_t *humidity_container;
+    lv_obj_t *humidity_scale;
+    lv_obj_t *temperature_label;
+    lv_obj_t *temperature_bar;
+    lv_obj_t *temperature_scale;
+    lv_obj_t *airflow_value;
+    lv_obj_t *airflow_arc;
+    lv_obj_t *airflow_scale;
+    lv_obj_t *airflow_label;
 } objects_t;
 
 extern objects_t objects;

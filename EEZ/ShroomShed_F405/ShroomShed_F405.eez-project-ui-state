@@ -1,8 +1,9 @@
 {
   "navigation": {
     "selectedUserPageObject": "[ShroomShed_F405.eez-project]:/userPages/1",
-    "selectedGlobalVariableObject": "[ShroomShed_F405.eez-project]:/variables/globalVariables/0",
-    "selectedBitmapObject": "[ShroomShed_F405.eez-project]:/bitmaps/1",
+    "selectedGlobalVariableObject": "[ShroomShed_F405.eez-project]:/variables/globalVariables/1",
+    "selectedStyleObject": "[ShroomShed_F405.eez-project]:/lvglStyles/styles/3",
+    "selectedBitmapObject": "[ShroomShed_F405.eez-project]:/bitmaps/2",
     "subnavigationSelectedItems": {
       "variables-tab/sub-navigation/selected-item": "Global"
     }
@@ -25,8 +26,8 @@
           },
           {
             "type": "border",
-            "selected": 1,
-            "size": 240,
+            "selected": 0,
+            "size": 188.5,
             "location": "right",
             "children": [
               {
@@ -73,7 +74,7 @@
           },
           {
             "type": "border",
-            "selected": 1,
+            "selected": 0,
             "size": 164.5,
             "location": "bottom",
             "children": [
@@ -193,9 +194,22 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 47.8125,
+              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
+                {
+                  "type": "tab",
+                  "id": "#181780a4-77d1-468d-b76e-5a83aa8dc84f",
+                  "name": "Settings",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[ShroomShed_F405.eez-project]:/settings",
+                    "subObjectPath": "[ShroomShed_F405.eez-project]:/settings",
+                    "permanent": false
+                  },
+                  "icon": "material:settings"
+                },
                 {
                   "type": "tab",
                   "id": "#def5b92a-9e4b-4bb1-8480-b7dbd1605ea7",
@@ -207,7 +221,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -227,8 +242,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -765,7 +779,8 @@
                       "component": "styles",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -997,15 +1012,13 @@
     "[ShroomShed_F405.eez-project]:/userPages/1[flow-state]": {
       "selection": {
         "0": {
-          "1": {
-            "$selected": true
-          }
+          "0": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -177,
-          "y": -216
+          "x": -256,
+          "y": -218
         },
         "scale": 3
       },
@@ -1014,6 +1027,14 @@
         "position": 0,
         "secondToPx": 200,
         "scrollLeft": 0
+      }
+    },
+    "[ShroomShed_F405.eez-project]:/lvglStyles/styles[tree-state]": {
+      "0": {},
+      "1": {},
+      "2": {},
+      "3": {
+        "$selected": true
       }
     }
   },
@@ -1030,7 +1051,9 @@
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
   "lvglState": "DEFAULT",
-  "lvglExpandedPropertiesGroup": [],
+  "lvglExpandedPropertiesGroup": [
+    "TEXT"
+  ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
   "flowZoom": 3,

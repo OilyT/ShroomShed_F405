@@ -14,6 +14,17 @@ objects_t objects;
 lv_obj_t *tick_value_change_obj;
 uint32_t active_theme_index = 0;
 
+static void event_handler_cb_main_airflow_arc(lv_event_t *e) {
+    lv_event_code_t event = lv_event_get_code(e);
+    if (event == LV_EVENT_VALUE_CHANGED) {
+        lv_obj_t *ta = lv_event_get_target(e);
+        if (tick_value_change_obj != ta) {
+            int32_t value = lv_arc_get_value(ta);
+            set_var_display_airflow_int(value);
+        }
+    }
+}
+
 void create_screen_splash_screen() {
     lv_obj_t *obj = lv_obj_create(0);
     objects.splash_screen = obj;
@@ -24,26 +35,10 @@ void create_screen_splash_screen() {
         lv_obj_t *parent_obj = obj;
         {
             lv_obj_t *obj = lv_image_create(parent_obj);
-            lv_obj_set_pos(obj, 0, 16);
+            lv_obj_set_pos(obj, 0, 32);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_image_set_src(obj, &img_shroom_shed_logo_color_bicubic);
         }
-    }
-    
-    tick_screen_splash_screen();
-}
-
-void tick_screen_splash_screen() {
-}
-
-void create_screen_main() {
-    lv_obj_t *obj = lv_obj_create(0);
-    objects.main = obj;
-    lv_obj_set_pos(obj, 0, 0);
-    lv_obj_set_size(obj, 128, 160);
-    lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    {
-        lv_obj_t *parent_obj = obj;
         {
             // Header
             lv_obj_t *obj = lv_label_create(parent_obj);
@@ -58,41 +53,6 @@ void create_screen_main() {
             lv_label_set_text(obj, "ShroomShed");
         }
         {
-            // humidity_bar
-            lv_obj_t *obj = lv_bar_create(parent_obj);
-            objects.humidity_bar = obj;
-            lv_obj_set_pos(obj, 0, 69);
-            lv_obj_set_size(obj, 128, 20);
-            lv_bar_set_range(obj, 0, 99);
-            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_CLICK_FOCUSABLE|LV_OBJ_FLAG_GESTURE_BUBBLE|LV_OBJ_FLAG_PRESS_LOCK|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_WITH_ARROW|LV_OBJ_FLAG_SNAPPABLE);
-        }
-        {
-            // Humidity_label
-            lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.humidity_label = obj;
-            lv_obj_set_pos(obj, 0, 48);
-            lv_obj_set_size(obj, 128, LV_SIZE_CONTENT);
-            add_style_shroom_shed_sub_heading(obj);
-            lv_label_set_text(obj, "Humidity %");
-        }
-        {
-            // humidity_container
-            lv_obj_t *obj = lv_obj_create(parent_obj);
-            objects.humidity_container = obj;
-            lv_obj_set_pos(obj, 0, 44);
-            lv_obj_set_size(obj, 128, 51);
-            lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_pad_top(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_color(obj, lv_color_hex(0xff799cb4), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_side(obj, LV_BORDER_SIDE_FULL, LV_PART_MAIN | LV_STATE_DEFAULT);
-        }
-        {
             lv_obj_t *obj = lv_label_create(parent_obj);
             lv_obj_set_pos(obj, 0, 21);
             lv_obj_set_size(obj, 128, LV_SIZE_CONTENT);
@@ -101,16 +61,198 @@ void create_screen_main() {
         }
     }
     
+    tick_screen_splash_screen();
+}
+
+void tick_screen_splash_screen() {
+}
+
+void create_screen_main() {
+    lv_obj_t *obj = lv_obj_create(0);
+    objects.main = obj;
+    lv_obj_set_pos(obj, 0, 0);
+    lv_obj_set_size(obj, 128, 160);
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    {
+        lv_obj_t *parent_obj = obj;
+        {
+            // humidity_bar
+            lv_obj_t *obj = lv_bar_create(parent_obj);
+            objects.humidity_bar = obj;
+            lv_obj_set_pos(obj, 6, 13);
+            lv_obj_set_size(obj, 115, 15);
+            lv_bar_set_range(obj, 40, 99);
+            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_CLICK_FOCUSABLE|LV_OBJ_FLAG_GESTURE_BUBBLE|LV_OBJ_FLAG_PRESS_LOCK|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_WITH_ARROW|LV_OBJ_FLAG_SNAPPABLE);
+            lv_obj_set_style_max_width(obj, 536870911, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa(obj, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffff0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_grad_dir(obj, LV_GRAD_DIR_HOR, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_grad_color(obj, lv_color_hex(0xff0154ff), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_grad_stop(obj, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_main_stop(obj, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        {
+            // humidity_label
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.humidity_label = obj;
+            lv_obj_set_pos(obj, 0, 0);
+            lv_obj_set_size(obj, 128, LV_SIZE_CONTENT);
+            add_style_shroom_shed_sub_heading(obj);
+            lv_label_set_text(obj, "Humidity %");
+        }
+        {
+            // humidity_scale
+            lv_obj_t *obj = lv_scale_create(parent_obj);
+            objects.humidity_scale = obj;
+            lv_obj_set_pos(obj, 7, 28);
+            lv_obj_set_size(obj, 114, 15);
+            lv_scale_set_mode(obj, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+            lv_scale_set_range(obj, 40, 100);
+            lv_scale_set_total_tick_count(obj, 13);
+            lv_scale_set_major_tick_every(obj, 2);
+            lv_scale_set_label_show(obj, true);
+            lv_obj_set_style_length(obj, 5, LV_PART_ITEMS | LV_STATE_DEFAULT);
+            lv_obj_set_style_line_width(obj, 2, LV_PART_ITEMS | LV_STATE_DEFAULT);
+            lv_obj_set_style_line_color(obj, lv_color_hex(0xff5da0aa), LV_PART_ITEMS | LV_STATE_DEFAULT);
+            lv_obj_set_style_length(obj, 10, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_line_width(obj, 2, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_line_color(obj, lv_color_hex(0xff5da0aa), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_color(obj, lv_color_hex(0xff10bdd8), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_line_color(obj, lv_color_hex(0xff5da0aa), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        {
+            // temperature_label
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.temperature_label = obj;
+            lv_obj_set_pos(obj, 0, 52);
+            lv_obj_set_size(obj, 128, LV_SIZE_CONTENT);
+            add_style_shroom_shed_sub_heading(obj);
+            lv_label_set_text(obj, "Temperature C");
+        }
+        {
+            // temperature_bar
+            lv_obj_t *obj = lv_bar_create(parent_obj);
+            objects.temperature_bar = obj;
+            lv_obj_set_pos(obj, 6, 66);
+            lv_obj_set_size(obj, 115, 15);
+            lv_bar_set_range(obj, 10, 35);
+            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_CLICK_FOCUSABLE|LV_OBJ_FLAG_GESTURE_BUBBLE|LV_OBJ_FLAG_PRESS_LOCK|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_WITH_ARROW|LV_OBJ_FLAG_SNAPPABLE);
+            lv_obj_set_style_max_width(obj, 536870911, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa(obj, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_color(obj, lv_color_hex(0xff003dff), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_grad_dir(obj, LV_GRAD_DIR_HOR, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_grad_color(obj, lv_color_hex(0xffff0101), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_grad_stop(obj, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_main_stop(obj, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        {
+            // temperature_scale
+            lv_obj_t *obj = lv_scale_create(parent_obj);
+            objects.temperature_scale = obj;
+            lv_obj_set_pos(obj, 7, 81);
+            lv_obj_set_size(obj, 114, 15);
+            lv_scale_set_mode(obj, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+            lv_scale_set_range(obj, 10, 35);
+            lv_scale_set_total_tick_count(obj, 26);
+            lv_scale_set_major_tick_every(obj, 5);
+            lv_scale_set_label_show(obj, true);
+            add_style_default_scale(obj);
+        }
+        {
+            // airflow_value
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.airflow_value = obj;
+            lv_obj_set_pos(obj, 82, 122);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICK_FOCUSABLE|LV_OBJ_FLAG_GESTURE_BUBBLE|LV_OBJ_FLAG_PRESS_LOCK|LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_WITH_ARROW|LV_OBJ_FLAG_SNAPPABLE);
+            add_style_shroom_shed_small_label(obj);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "");
+        }
+        {
+            // airflow_arc
+            lv_obj_t *obj = lv_arc_create(parent_obj);
+            objects.airflow_arc = obj;
+            lv_obj_set_pos(obj, 66, 105);
+            lv_obj_set_size(obj, 55, 55);
+            lv_obj_add_event_cb(obj, event_handler_cb_main_airflow_arc, LV_EVENT_ALL, 0);
+            lv_obj_set_style_arc_width(obj, 6, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_arc_color(obj, lv_color_hex(0xff01ff32), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_arc_rounded(obj, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+            lv_obj_set_style_arc_width(obj, 6, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_arc_rounded(obj, false, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_opa(obj, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+        }
+        {
+            // airflow_scale
+            lv_obj_t *obj = lv_scale_create(parent_obj);
+            objects.airflow_scale = obj;
+            lv_obj_set_pos(obj, 66, 105);
+            lv_obj_set_size(obj, 55, 55);
+            lv_scale_set_mode(obj, LV_SCALE_MODE_ROUND_INNER);
+            lv_scale_set_range(obj, 0, 100);
+            lv_scale_set_total_tick_count(obj, 11);
+            lv_scale_set_major_tick_every(obj, 2);
+            lv_scale_set_label_show(obj, false);
+            add_style_default_scale(obj);
+            lv_obj_set_style_length(obj, 5, LV_PART_ITEMS | LV_STATE_DEFAULT);
+            lv_obj_set_style_length(obj, 10, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        {
+            // airflow_label
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.airflow_label = obj;
+            lv_obj_set_pos(obj, 8, 122);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            add_style_shroom_shed_sub_heading(obj);
+            lv_label_set_text(obj, "Airflow");
+        }
+    }
+    
     tick_screen_main();
 }
 
 void tick_screen_main() {
     {
-        int32_t new_val = get_var_display_var_humidity();
+        int32_t new_val = get_var_display_humidity();
         int32_t cur_val = lv_bar_get_value(objects.humidity_bar);
         if (new_val != cur_val) {
             tick_value_change_obj = objects.humidity_bar;
             lv_bar_set_value(objects.humidity_bar, new_val, LV_ANIM_ON);
+            tick_value_change_obj = NULL;
+        }
+    }
+    {
+        int32_t new_val = get_var_display_temperaure();
+        int32_t cur_val = lv_bar_get_value(objects.temperature_bar);
+        if (new_val != cur_val) {
+            tick_value_change_obj = objects.temperature_bar;
+            lv_bar_set_value(objects.temperature_bar, new_val, LV_ANIM_ON);
+            tick_value_change_obj = NULL;
+        }
+    }
+    {
+        const char *new_val = get_var_display_airflow_string();
+        const char *cur_val = lv_label_get_text(objects.airflow_value);
+        if (strcmp(new_val, cur_val) != 0) {
+            tick_value_change_obj = objects.airflow_value;
+            lv_label_set_text(objects.airflow_value, new_val);
+            tick_value_change_obj = NULL;
+        }
+    }
+    {
+        int32_t new_val = get_var_display_airflow_int();
+        int32_t cur_val = lv_arc_get_value(objects.airflow_arc);
+        if (new_val != cur_val) {
+            tick_value_change_obj = objects.airflow_arc;
+            lv_arc_set_value(objects.airflow_arc, new_val);
             tick_value_change_obj = NULL;
         }
     }

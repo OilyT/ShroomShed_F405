@@ -114,6 +114,8 @@ static uint8_t a_sht31_write_bytes(sht31_handle_t *handle, uint16_t reg, uint8_t
     }
 }
 
+
+
 /**
  * @brief      read bytes
  * @param[in]  *handle pointer to an sht31 handle structure

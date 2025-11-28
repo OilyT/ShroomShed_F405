@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include "stm32f4xx_hal_i2c.h"
 #include "usbd_cdc_if.h"
 
 extern I2C_HandleTypeDef hi2c2;
@@ -82,12 +83,9 @@ uint8_t sht31_interface_iic_deinit(void)
  */
 uint8_t sht31_interface_iic_write_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len)
 {
-    // Mem Write: device address, register (16-bit), register size, buffer, length, timeout
-    if(HAL_I2C_Mem_Write(&hi2c2, addr << 1, reg, I2C_MEMADD_SIZE_16BIT, buf, len, 1000) != HAL_OK)
-    {
+    if (HAL_I2C_Mem_Write(&hi2c2, addr, reg, I2C_MEMADD_SIZE_16BIT, buf, len, 1000)) {
         return 1;
     }
-    
     return 0;
 }
 
@@ -104,12 +102,9 @@ uint8_t sht31_interface_iic_write_address16(uint8_t addr, uint16_t reg, uint8_t 
  */
 uint8_t sht31_interface_iic_read_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len)
 {
-    // Mem Read: device address, register (16-bit), register size, buffer, length, timeout
-    if(HAL_I2C_Mem_Read(&hi2c2, addr << 1, reg, I2C_MEMADD_SIZE_16BIT, buf, len, 1000) != HAL_OK)
-    {
+    if (HAL_I2C_Mem_Read(&hi2c2, addr, reg, I2C_MEMADD_SIZE_16BIT, buf, len, 1000)) {
         return 1;
     }
-    
     return 0;
 }
 
@@ -126,12 +121,11 @@ uint8_t sht31_interface_iic_read_address16(uint8_t addr, uint16_t reg, uint8_t *
  */
 uint8_t sht31_interface_iic_scl_read_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len)
 {
-    // Mem Read: device address, register (16-bit), register size, buffer, length, timeout
-    if(HAL_I2C_Mem_Read(&hi2c2, addr << 1, reg, I2C_MEMADD_SIZE_16BIT, buf, len, 1000) != HAL_OK)
+    
+    if(HAL_I2C_Mem_Read(&hi2c2, addr, reg, I2C_MEMADD_SIZE_16BIT, buf, len, 1000) != HAL_OK)
     {
         return 1;
     }
-    
     return 0;
 }
 
@@ -154,10 +148,18 @@ void sht31_interface_debug_print(const char *const fmt, ...)
 {   
     va_list args;
     va_start(args, fmt);
-    vsnprintf(sht31_usb_buffer, sizeof(sht31_usb_buffer), fmt, args);
+    int len = vsnprintf(sht31_usb_buffer, sizeof(sht31_usb_buffer) - 2, fmt, args);
     va_end(args);
     
-    CDC_Transmit_FS((uint8_t*)sht31_usb_buffer, strlen(sht31_usb_buffer));  
+    // Replace \n with \r\n for proper terminal display
+    if (len > 0 && sht31_usb_buffer[len - 1] == '\n') {
+        sht31_usb_buffer[len - 1] = '\r';
+        sht31_usb_buffer[len] = '\n';
+        sht31_usb_buffer[len + 1] = '\0';
+        len++;
+    }
+    
+    CDC_Transmit_FS((uint8_t*)sht31_usb_buffer, len);  
 }
 
 /**
@@ -171,19 +173,19 @@ void sht31_interface_receive_callback(uint16_t type)
     {
         case SHT31_STATUS_ALERT_PENDING_STATUS :
         {
-            sht31_interface_debug_print("sht31: irq alert pending status.\n");
+            sht31_interface_debug_print("sht31: irq alert pending status.\r\n");
             
             break;
         }
         case SHT31_STATUS_HUMIDITY_ALERT :
         {
-            sht31_interface_debug_print("sht31: irq humidity alert.\n");
+            sht31_interface_debug_print("sht31: irq humidity alert.\r\n");
             
             break;
         }
         case SHT31_STATUS_TEMPERATURE_ALERT :
         {
-            sht31_interface_debug_print("sht31: irq temperature alert.\n");
+            sht31_interface_debug_print("sht31: irq temperature alert.\r\n");
             
             break;
         }

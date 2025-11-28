@@ -10,6 +10,7 @@
 #include "screens.h"
 #include "st7735.h"
 #include "lvgl.h"
+#include "stm32f4xx_hal.h"
 #include "ui.h"
 
 
@@ -42,25 +43,27 @@ void initDisplay(void) {
 
     // Initialize EEZ Studio generated UI
     ui_init();
-    loadScreen(SCREEN_ID_SPLASH_SCREEN);
-    updateDisplay();
-    updateDisplay();
-    HAL_Delay(2000); 
+    loadScreen(SCREEN_ID_SPLASH_SCREEN); 
  }
 
 
 void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_map)
 {
-    /* The most simple case (also the slowest) to send all rendered pixels to the
-        * screen one-by-one.  `put_px` is just an example.  It needs to be implemented by you. */
-    uint16_t * buf16 = (uint16_t *)px_map; /* Let's say it's a 16 bit (RGB565) display */
-    int32_t x, y;
-    for(y = area->y1; y <= area->y2; y++) {
-        for(x = area->x1; x <= area->x2; x++) {
-            ST7735_DrawPixel(x, y, *buf16);
-            buf16++;
-        }
+    uint16_t * buf16 = (uint16_t *)px_map; /* RGB565 display buffer */
+    
+    /* Calculate area dimensions */
+    int32_t width = area->x2 - area->x1 + 1;
+    int32_t height = area->y2 - area->y1 + 1;
+    int32_t total_pixels = width * height;
+    
+    /* Swap bytes for each pixel (LVGL little-endian to ST7735 big-endian) */
+    for(int32_t i = 0; i < total_pixels; i++) {
+        uint16_t pixel = buf16[i];
+        buf16[i] = (pixel >> 8) | (pixel << 8);  // Swap MSB and LSB
     }
+    
+    /* Send the entire buffer as one rectangular region */
+    ST7735_DrawImage(area->x1, area->y1, width, height, buf16);
 
     lv_display_flush_ready(display);
 }
@@ -76,10 +79,11 @@ void updateDisplay(void) {
 
 void displayProcess(void) {
     // Placeholder for display processing code
-    loadScreen(SCREEN_ID_MAIN);
+    if (HAL_GetTick() > 5000) {
+        loadScreen(SCREEN_ID_MAIN);
+    }
 
     updateDisplay();
-
 }
 
 

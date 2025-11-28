@@ -42,7 +42,7 @@
 // system polling
 #define SYSTICK_HZ 1000
 #define BUTTON_PROCESS_HZ 100
-#define SERIAL_PROCESS_HZ 1
+#define SERIAL_PROCESS_HZ 0.5
 #define DISPLAY_PROCESS_HZ 5
 #define SENSOR_PROCESS_HZ 1
 #define CONTROL_PROCESS_HZ 5
@@ -148,8 +148,9 @@ int main(void)
   MX_SPI1_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  initDisplay();
   init_sensors();
+  initDisplay();
+
 
   /* USER CODE END 2 */
 
@@ -648,16 +649,8 @@ void fanProcess(void) {
   // Placeholder for fan processing code
 }
 
-
-void ButtonProcess(void) {
-  // Placeholder for button processing code
-}
-
 void serialProcess(void) {
   // Placeholder for serial processing code
-  sprintf(usb_buffer, "SHT31 Temp: %f, SHT31 Humidity: %f\r\n", shroomShed.temperatureCurrent, shroomShed.humidityCurrent);
-  CDC_Transmit_FS((uint8_t*)usb_buffer, strlen(usb_buffer));
-  
 }
 /* USER CODE END 4 */
 

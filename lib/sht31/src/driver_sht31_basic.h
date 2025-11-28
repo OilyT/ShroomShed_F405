@@ -54,7 +54,7 @@ extern "C"{
 /**
  * @brief sht31 basic example default definition
  */
-#define SHT31_BASIC_DEFAULT_RATE                 SHT31_RATE_10HZ                 /**< rate 100Hz */
+#define SHT31_BASIC_DEFAULT_RATE                 SHT31_RATE_2HZ                 /**< rate 100Hz */
 #define SHT31_BASIC_DEFAULT_REPEATABILITY        SHT31_REPEATABILITY_HIGH        /**< set high */
 #define SHT31_BASIC_DEFAULT_HEATER               SHT31_BOOL_FALSE                /**< disable heater */
 

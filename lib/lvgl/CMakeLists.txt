@@ -42,3 +42,4 @@ if(MSVC AND BUILD_SHARED_LIBS)
     INTERFACE "LV_ATTRIBUTE_EXTERN_DATA=__declspec(dllimport)"
     PRIVATE "LV_ATTRIBUTE_EXTERN_DATA=__declspec(dllexport)")
 endif()
+
